@@ -12,11 +12,11 @@
     <section class="workspace">
       <div class="panel"><div class="panel-head"><span>01 / SOURCE</span><span class="hint">Luau input</span></div><textarea id="source" spellcheck="false" placeholder="-- Paste your Luau here&#10;print(&quot;hi&quot;)">local greeting = "hi"
 print(greeting)</textarea></div>
-      <div class="controls"><button id="obfuscate" class="primary">Obfuscate <span>→</span></button><label>MODE<select id="mode"><option value="safe-strings">Safe strings</option><option value="safe">No transform (pass-through)</option></select></label><label>SEED<input id="seed" type="number" placeholder="Random"></label></div>
+      <div class="controls"><button id="obfuscate" class="primary">Obfuscate <span>→</span></button><label>MODE<select id="mode"><option value="safe-strings">Safe strings</option><option value="strong">Strong / large</option><option value="safe">No transform (pass-through)</option></select></label><label>SEED<input id="seed" type="number" placeholder="Random"></label></div>
       <div class="panel"><div class="panel-head"><span>02 / PROTECTED OUTPUT</span><button id="copy">COPY</button></div><textarea id="output" spellcheck="false" readonly placeholder="Your protected Luau will appear here…"></textarea></div>
     </section>
     <div id="status" class="status idle"><span class="dot"></span><span>Ready. Output is never generated when validation fails.</span></div>
-    <section class="notes"><div><b>Why this is safe</b><p>No scope-blind renaming. No partial VM. No dropped statements. Unsupported syntax is preserved exactly.</p></div><div><b>Runtime note</b><p>String mode uses Roblox's built-in <code>bit32</code>, <code>string</code>, and <code>table</code> libraries.</p></div></section>
+    <section class="notes"><div><b>Why this is safe</b><p>No scope-blind renaming. No partial VM. No dropped statements. Unsupported syntax is preserved exactly.</p></div><div><b>Strong mode</b><p>Adds a large deterministic integrity layer around the safe output. It is intentionally not a fake interpreter.</p></div></section>
     <footer><button id="clear" class="text-button">Clear workspace</button><span>LuauShield v1.0 · built for Roblox creators</span></footer>
   </main>
   <script src="/app.js"></script>
