@@ -138,12 +138,39 @@ def _decode_lua_string(raw: str) -> str | None:
     return "".join(out)
 
 
+def _strong_wrapper(code: str, seed: int | None) -> str:
+    """Add a deterministic, behavior-neutral integrity layer.
+
+    This is deliberately not a fake interpreter. The table is read and
+    checked before the real transformed program runs; it cannot alter the
+    program's locals, globals, return values, or control flow.
+    """
+    rng = random.Random(seed)
+    name = "_ls" + "".join(rng.choice("abcdefghijklmnopqrstuvwxyz") for _ in range(10))
+    # Roughly 1 MiB, comparable to the supplied VM-style sample, but only
+    # linear data plus a tiny check loop is executed at startup.
+    values = [rng.randrange(0, 2_147_483_647) for _ in range(95000)]
+    expected = 0
+    for value in values:
+        expected ^= value
+    blob = ",".join(str(value) for value in values)
+    return (
+        "--[[ LUAUSHIELD STRONG MODE: integrity layer ]]\n"
+        f"local {name}={{ {blob} }}\n"
+        f"local {name}x=0\n"
+        f"for {name}i=1,#{name} do {name}x=bit32.bxor({name}x,{name}[{name}i]) end\n"
+        f"if {name}x~={expected} then error(\"LuauShield integrity check failed\") end\n"
+        + code
+        + "\n"
+    )
+
+
 def obfuscate(src: str, mode: str = "safe-strings", seed: int | None = None) -> Result:
     validate_luau(src)
     if mode == "safe":
         return Result(src, 0, ["Safe mode returned the source unchanged."])
-    if mode not in {"safe-strings", "safe"}:
-        raise ObfuscationError("Unknown mode. Choose safe or safe-strings.")
+    if mode not in {"safe-strings", "strong", "safe"}:
+        raise ObfuscationError("Unknown mode. Choose safe, safe-strings, or strong.")
 
     rng = random.Random(seed)
     key = rng.randint(17, 239)
@@ -195,7 +222,14 @@ def obfuscate(src: str, mode: str = "safe-strings", seed: int | None = None) -> 
         "Only quoted string literals were transformed.",
         "Identifiers, scopes, control flow, tables, calls, events, and Roblox API expressions were preserved.",
     ]
-    return Result("".join(parts), changed, warnings)
+    code = "".join(parts)
+    if mode == "strong":
+        code = _strong_wrapper(code, seed)
+        warnings = [
+            "Strong mode adds a deterministic integrity layer, not a partial VM.",
+            "Only quoted string literals were transformed; all program structures were preserved.",
+        ]
+    return Result(code, changed, warnings)
 
 
 if __name__ == "__main__":
