@@ -154,14 +154,25 @@ def _strong_wrapper(code: str, seed: int | None) -> str:
     for value in values:
         expected ^= value
     blob = ",".join(str(value) for value in values)
+    # The executable payload is data until its integrity check succeeds.
+    # This catches edits to any character in the protected program.
+    payload_hash = 2166136261
+    for byte in code.encode("utf-8"):
+        payload_hash = ((payload_hash ^ byte) * 16777619) % 4294967296
+    payload = json.dumps(code, ensure_ascii=False, separators=(",", ":"))
     return (
         "--[[ LUAUSHIELD STRONG MODE: integrity layer ]]\n"
         f"local {name}={{ {blob} }}\n"
         f"local {name}x=0\n"
         f"for {name}i=1,#{name} do {name}x=bit32.bxor({name}x,{name}[{name}i]) end\n"
         f"if {name}x~={expected} then error(\"LuauShield integrity check failed\") end\n"
-        + code
-        + "\n"
+        f"local {name}s={payload}\n"
+        f"local {name}h=2166136261\n"
+        f"for {name}i=1,#{name}s do {name}h=(({name}h~string.byte({name}s,{name}i))*16777619)%4294967296 end\n"
+        f"if {name}h~={payload_hash} then error(\"LuauShield payload was modified\") end\n"
+        f"local {name}f,{name}e=loadstring({name}s)\n"
+        f"if not {name}f then error({name}e or \"LuauShield payload could not load\") end\n"
+        f"{name}f()\n"
     )
 
 
