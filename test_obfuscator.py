@@ -29,6 +29,13 @@ end)'''
         source = 'local x = { [1] = "ok" }'
         self.assertEqual(obfuscate(source, mode="safe").code, source)
 
+    def test_strong_mode_is_large_but_preserves_program(self):
+        source = 'print("hi")'
+        result = obfuscate(source, mode="strong", seed=3)
+        self.assertGreater(len(result.code), 500_000)
+        self.assertIn("print(", result.code)
+        self.assertIn("LuauShield integrity check failed", result.code)
+
 
 if __name__ == "__main__":
     unittest.main()
