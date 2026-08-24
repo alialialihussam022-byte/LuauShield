@@ -33,8 +33,10 @@ end)'''
         source = 'print("hi")'
         result = obfuscate(source, mode="strong", seed=3)
         self.assertGreater(len(result.code), 500_000)
+        self.assertIn("loadstring(", result.code)
         self.assertIn("print(", result.code)
         self.assertIn("LuauShield integrity check failed", result.code)
+        self.assertIn("LuauShield payload was modified", result.code)
 
 
 if __name__ == "__main__":
