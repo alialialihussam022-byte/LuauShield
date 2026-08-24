@@ -9,7 +9,8 @@ python server.py
 Open `http://localhost:8000`. The default mode rewrites only quoted string
 literals into a small Roblox-compatible decoder. **Strong / large** mode adds
 a deterministic integrity layer to make output substantially larger and harder
-to read, while still executing the transformed source directly. It
+to read. The protected payload is verified before being loaded, so edits to
+the payload fail closed instead of silently changing behavior. It
 deliberately does not rename identifiers or emulate code in a partial VM:
 those approaches can change lexical scope, environment behavior, event
 callbacks, or unsupported syntax. Invalid delimiters and unterminated strings
