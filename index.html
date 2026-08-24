@@ -10,10 +10,10 @@
     <header><div class="brand"><span class="mark">◆</span><span>LuauShield</span></div><span class="tag">CORRECTNESS-FIRST PROTECTION</span></header>
     <section class="hero"><p class="eyebrow">ROBLOX LUAU TOOLCHAIN</p><h1>Protect the code.<br><em>Keep the behavior.</em></h1><p class="intro">A conservative obfuscator that transforms only what it can prove safe. Your scopes, control flow, APIs, and runtime behavior stay intact.</p></section>
     <section class="workspace">
-      <div class="panel"><div class="panel-head"><span>01 / SOURCE</span><span class="hint">Luau input</span></div><textarea id="source" spellcheck="false" placeholder="-- Paste your Luau here&#10;print(&quot;hi&quot;)">local greeting = "hi"
+      <div class="panel"><div class="panel-head"><span>01 / SOURCE</span><span class="hint">Luau input · <label class="file-label" for="upload">UPLOAD FILE</label><input id="upload" type="file" accept=".lua,.luau,text/plain"></span></div><textarea id="source" spellcheck="false" placeholder="-- Paste your Luau here&#10;print(&quot;hi&quot;)">local greeting = "hi"
 print(greeting)</textarea></div>
       <div class="controls"><button id="obfuscate" class="primary">Obfuscate <span>→</span></button><label>MODE<select id="mode"><option value="safe-strings">Safe strings</option><option value="strong">Strong / large</option><option value="safe">No transform (pass-through)</option></select></label><label>SEED<input id="seed" type="number" placeholder="Random"></label></div>
-      <div class="panel"><div class="panel-head"><span>02 / PROTECTED OUTPUT</span><button id="copy">COPY</button></div><textarea id="output" spellcheck="false" readonly placeholder="Your protected Luau will appear here…"></textarea></div>
+      <div class="panel"><div class="panel-head"><span>02 / PROTECTED OUTPUT</span><span><button id="copy">COPY</button><button id="download">DOWNLOAD</button></span></div><textarea id="output" spellcheck="false" readonly placeholder="Your protected Luau will appear here…"></textarea></div>
     </section>
     <div id="status" class="status idle"><span class="dot"></span><span>Ready. Output is never generated when validation fails.</span></div>
     <section class="notes"><div><b>Why this is safe</b><p>No scope-blind renaming. No partial VM. No dropped statements. Unsupported syntax is preserved exactly.</p></div><div><b>Strong mode</b><p>Adds a large deterministic integrity layer around the safe output. It is intentionally not a fake interpreter.</p></div></section>
